@@ -6,11 +6,11 @@ canvas.height = 622;
 
 
 var background = new Image();
-background.src = "images/lion,jpg";
+background.src = "images/lion.jpg";
 
 background.onload = function(){
     ctx.drawImage(background,0,0);   
-	var pixelData = canvas.getContext('2d').getImageData(34, 34, 1, 1).data;
+	var pixelData = canvas.getContext('2d').getImageData(34, 34, 300, 168).data;
 	console.log(pixelData);
 }
 
