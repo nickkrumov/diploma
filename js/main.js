@@ -5,22 +5,31 @@ Drawer.wCanvas = document.getElementById("window-canvas");
 Drawer.bgCtx = Drawer.bgCanvas.getContext("2d");
 Drawer.wCtx = Drawer.wCanvas.getContext("2d");
 Drawer.pixelSize = 20;
-
-Drawer.bgCanvas.width = 300;
-Drawer.bgCanvas.height = 300;
-Drawer.wCanvas.width = 300;
-Drawer.wCanvas.height = 300;
+Drawer.maxWidth = 240;
 
 Drawer.drawBg = function() {
 	var bgImg = new Image();
-	bgImg.src = "images/charlie_grayscale.jpg";
+	bgImg.src = "images/lion.jpg";
 	bgImg.crossOrigin="anonymous";
-
-	bgImg.onload = function(){
-		Drawer.bgCtx.drawImage(bgImg,0,0);   
+	bgImg.onload = function(){ 
+		let scale = Drawer.maxWidth/bgImg.width;
+		if( scale > 1) {
+			scale = 1;
+		}
+		let newW = bgImg.width*scale;
+		let newH = bgImg.height*scale;
+		newH = newH - newH % Drawer.pixelSize;
+		
+		Drawer.bgCanvas.width = newW;
+		Drawer.wCanvas.width = newW;
+		Drawer.bgCanvas.height = newH;
+		Drawer.wCanvas.height = newH;
+		Drawer.bgCtx.drawImage(bgImg,0,0, bgImg.width, bgImg.height, 0, 0, newW, newH);  
 	}
 }
-
+Drawer.scalePreserveAspectRatio = function(imgW,imgH,maxW,maxH){
+  return(Math.min((maxW/imgW),(maxH/imgH)));
+}
 Drawer.window = {
 	x: 0,
 	y: 0
@@ -51,7 +60,6 @@ Drawer.drawWindow = function(x, y) {
 }
 
 Drawer.moveWindow = function(x, y) {
-	console.log("move x: " + x + ", y: " + y);
 	this.wCtx.clearRect(0, 0, this.wCanvas.width, this.wCanvas.height);
 	this.drawWindow(x, y);
 }
@@ -70,7 +78,6 @@ Drawer.randomBg = function() {
 }
 
 Drawer.arrowMove = function(e) {
-	console.log(Drawer.window.x);
 	let s = Drawer.pixelSize;
 	let x = Drawer.window.x;
 	let y = Drawer.window.y;
