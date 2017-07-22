@@ -1,4 +1,9 @@
-#canvas2 {
+#background-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#window-canvas {
   position: absolute;
   top: 0;
   left: 0;
