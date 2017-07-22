@@ -109,5 +109,5 @@ Drawer.arrowMove = function(e) {
 }
 document.addEventListener( "keydown", Drawer.arrowMove, true);
 
-Drawer.randomBg();
+Drawer.drawBg();
 Drawer.drawWindow(60, 40);
