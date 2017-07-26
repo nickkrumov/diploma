@@ -111,3 +111,34 @@ document.addEventListener( "keydown", Drawer.arrowMove, true);
 
 Drawer.drawBg();
 Drawer.drawWindow(60, 40);
+
+function updateMatrix(a, f) {
+	let cells = $(".cell");
+	let filter = $(".filter_val");
+	let res = document.getElementById("result_cell");
+	let r = 0;
+	let txt = "#fff";
+	
+	for (var i = 0; i < cells.length; i++) {
+		let val = a[i] * f[i];
+		r += val;
+		
+		if (a[i] > 255) { a[i] = 255; }
+		if (a[i] > 130) { txt = "#000"; }
+		
+		cells.get(i).innerHTML = a[i];
+		cells.get(i).style.backgroundColor = "rgb(" + [a[i], a[i], a[i]] + ")";
+		cells.get(i).style.color = txt;
+		filter.get(i).innerHTML = "x " + f[i];
+		
+		txt = "#fff";
+	}
+	
+	if (r > 130) { txt = "#000"; }
+	
+	res.innerHTML = r;
+	res.style.backgroundColor = "rgb(" + [r, r, r] + ")";
+	res.style.color = txt;
+}
+
+updateMatrix([10,10,10,80,160,2,4,4,45],[1,1,1,2,2,2,-3,3,-6]);

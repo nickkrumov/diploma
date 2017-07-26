@@ -8,3 +8,63 @@
   top: 0;
   left: 0;
 }
+
+/* matrix --------------------*/
+
+.matrix {
+	position: relative;
+	top: 250px;
+	display: inline-block;
+	width: 185px;
+	height: 190px;
+}
+
+#row1 {
+	margin-left: 15px;
+}
+
+#row4 {
+	margin-top: 10px;
+}
+
+.cell {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	background-color: silver;
+	text-align: center;
+	line-height: 40px;
+	border: 1px solid #d3d3d3;
+}
+
+#result_cell {
+	display: inline-block;
+	width: 50px;
+	height: 50px;
+	margin: 0 54px;
+	background-color: silver;
+	text-align: center;
+	line-height: 50px;
+	border: 1px solid #d3d3d3;
+}
+
+#equals {
+	position: relative;
+	left: 30px;
+}
+
+.filter_val {
+	display: inline-block;
+	width: 40px;
+	text-align: center;
+}
+
+#row1 .filter_val + .filter_val {
+	margin-left: 15px;
+}
+
+#row2 .filter_val, #row3 .filter_val {
+	margin-left: 15px;
+}
+
+/* --------------------- */
