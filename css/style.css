@@ -1,32 +1,40 @@
-#background-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  border: 1px solid blue;
+#original-image-canvas {
+	position: absolute;
+	border: 2px solid brown;
 }
-#overlay-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-#window-canvas {
-  position: absolute;
-  top: 0;
-  left: 260px;
+#original-image-overlay-canvas {
+	position: absolute;
   z-index: 1000;	
+  border: 2px solid purple;
 }
-#region-canvas {
-  position: absolute;
-  top: 0;
-  left: 260px;
-  border: 1px solid green;
+#filtered-image-canvas {
+	position: absolute;
+  border: 2px solid blue;
+}
+#original-region-canvas {
+	position: absolute;
+  border: 2px solid orange;
+}
+#original-region-window-canvas {
+	position: absolute;
+  z-index: 1000;	
+  border: 2px solid yellow;
+}
+#filtered-region-canvas {
+	position: absolute;
+  border: 2px solid green;
+}
+#filtered-region-window-canvas {
+	position: absolute;
+  z-index: 1000;	
+  border: 2px solid red;
 }
 
 /* matrix --------------------*/
 
 .matrix {
 	position: relative;
-	top: 250px;
+	top: 1250px;
 	display: inline-block;
 	width: 185px;
 	height: 190px;

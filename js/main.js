@@ -1,95 +1,172 @@
-
 var Drawer = {};
-Drawer.bgCanvas = document.getElementById("background-canvas");
-Drawer.oCanvas = document.getElementById("overlay-canvas");
-Drawer.rCanvas = document.getElementById("region-canvas");
-Drawer.wCanvas = document.getElementById("window-canvas");
-Drawer.oCtx = Drawer.oCanvas.getContext("2d");
-Drawer.bgCtx = Drawer.bgCanvas.getContext("2d");
-Drawer.wCtx = Drawer.wCanvas.getContext("2d");
-Drawer.rCtx = Drawer.rCanvas.getContext("2d");
-Drawer.PIXEL_SIZE = 1;
+/* Canvas initialization */
+Drawer.originalImageCanvas = document.getElementById("original-image-canvas");
+Drawer.originalImageOverlayCanvas = document.getElementById("original-image-overlay-canvas");
+
+Drawer.filteredImageCanvas = document.getElementById("filtered-image-canvas");
+
+Drawer.originalRegionCanvas = document.getElementById("original-region-canvas");
+Drawer.originalRegionWindowCanvas = document.getElementById("original-region-window-canvas");
+
+Drawer.filteredRegionCanvas = document.getElementById("filtered-region-canvas");
+Drawer.filteredRegionWindowCanvas = document.getElementById("filtered-region-window-canvas");
+
+Drawer.originalImageCtx = Drawer.originalImageCanvas.getContext("2d");
+Drawer.originalImageOverlayCtx = Drawer.originalImageOverlayCanvas.getContext("2d");
+
+Drawer.filteredImageCtx = Drawer.filteredImageCanvas.getContext("2d");
+
+Drawer.originalRegionCtx = Drawer.originalRegionCanvas.getContext("2d");
+Drawer.originalRegionWindowCtx = Drawer.originalRegionWindowCanvas.getContext("2d");
+
+Drawer.filteredRegionCtx = Drawer.filteredRegionCanvas.getContext("2d");
+Drawer.filteredRegionWindowCtx = Drawer.filteredRegionWindowCanvas.getContext("2d");
+
+/* Constants */
+Drawer.PIXEL_SIZE = 10;
 Drawer.MAX_IMAGE_WIDTH = 240;
 Drawer.REGION_PIXEL_NUMBER = 50;
-Drawer.oCanvas.onmousemove = highlight;
-Drawer.oCanvas.onmousedown = selectRegion;
+
+/* Global state */
+Drawer.windowPixelW = Drawer.REGION_PIXEL_NUMBER;
+Drawer.windowPixelH = Drawer.REGION_PIXEL_NUMBER;
 Drawer.selectedRegionX = 0;
 Drawer.selectedRegionY = 0;
 
-Drawer.drawBg = function() {
-	var bgImg = new Image();
-	bgImg.src = "images/lion.jpg";
-	bgImg.crossOrigin="anonymous";
-	bgImg.onload = function(){ 
-		let scale = Drawer.MAX_IMAGE_WIDTH/bgImg.width;
+Drawer.originalImageOverlayCanvas.onmousemove = highlight;
+Drawer.originalImageOverlayCanvas.onmousedown = selectRegion;
+
+Drawer.init = function() {
+	var img = new Image();
+	img.src = "images/flower.jpg";
+	img.crossOrigin="anonymous";
+	img.onload = function(){ 
+		let scale = Drawer.MAX_IMAGE_WIDTH/img.width;
 		if( scale > 1) {
 			scale = 1;
 		}
-		let newW = bgImg.width*scale;
-		let newH = bgImg.height*scale;
-		newH = newH - newH % Drawer.PIXEL_SIZE;
+		let w = img.width*scale;
+		let h = img.height*scale;
+		h = h - h % Drawer.PIXEL_SIZE;
 		
-		Drawer.bgCanvas.width = newW;
-		Drawer.bgCanvas.height = newH;
-		Drawer.oCanvas.width = newW;
-		Drawer.oCanvas.height = newH;
+		Drawer.originalImageCanvas.width = w;
+		Drawer.originalImageCanvas.height = h;
 		
-		Drawer.bgCtx.drawImage(bgImg,0,0, bgImg.width, bgImg.height, 0, 0, newW, newH);  
+		Drawer.originalImageOverlayCanvas.width = w;
+		Drawer.originalImageOverlayCanvas.height = h;
+		
+		Drawer.filteredImageCanvas.width = w;
+		Drawer.filteredImageCanvas.height = h;
+		
+		let regionSize = Drawer.PIXEL_SIZE*Drawer.REGION_PIXEL_NUMBER;
+		
+		Drawer.originalRegionCanvas.width = regionSize;
+		Drawer.originalRegionCanvas.height = regionSize;
+		
+		Drawer.originalRegionWindowCanvas.height = regionSize;
+		Drawer.originalRegionWindowCanvas.width = regionSize;
+		
+		Drawer.filteredRegionCanvas.width = regionSize;
+		Drawer.filteredRegionCanvas.height = regionSize;
+		
+		Drawer.filteredRegionWindowCanvas.height = regionSize;
+		Drawer.filteredRegionWindowCanvas.width = regionSize;
+		
+		let margin = 20;
+		
+		Drawer.originalImageCanvas.style.top = margin + "px";
+		Drawer.originalImageCanvas.style.left = margin + "px";
+		
+		Drawer.originalImageOverlayCanvas.style.top = margin + "px";
+		Drawer.originalImageOverlayCanvas.style.left = margin + "px";
+		
+		Drawer.filteredImageCanvas.style.top = margin + "px";
+		Drawer.filteredImageCanvas.style.left = (w + margin + 50) + "px";
+		
+		Drawer.originalRegionCanvas.style.top = (h + margin + 20) + "px";
+		Drawer.originalRegionCanvas.style.left = margin + "px";
+		
+		Drawer.originalRegionWindowCanvas.style.top = (h + margin + 20) + "px";
+		Drawer.originalRegionWindowCanvas.style.left = margin + "px";
+		
+		Drawer.filteredRegionCanvas.style.top = (h + margin + 20) + "px";
+		Drawer.filteredRegionCanvas.style.left = (regionSize + margin + 50) + "px";
+		
+		Drawer.filteredRegionWindowCanvas.style.top = (h + margin + 20) + "px";
+		Drawer.filteredRegionWindowCanvas.style.left = (regionSize + margin + 50) + "px";
+		
+		Drawer.originalImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);  
+		grayscale();
 		render();
 		Drawer.drawRegion(0, 0);
+		Drawer.drawWindow(0, 0);
 	}
 }
+function grayscale() {
+	var imageData = Drawer.originalImageCtx.getImageData(0, 0, Drawer.originalImageCanvas.width, Drawer.originalImageCanvas.height);
+        var data = imageData.data;
+
+        for(var i = 0; i < data.length; i += 4) {
+          var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
+          // red
+          data[i] = brightness;
+          // green
+          data[i + 1] = brightness;
+          // blue
+          data[i + 2] = brightness;
+        }
+	Drawer.originalImageCtx.putImageData(imageData, 0, 0);
+}
 function render() {
-	let w = Drawer.oCanvas.width;
-	let h = Drawer.oCanvas.height;
-    Drawer.oCtx.clearRect(0, 0, w, h);
-	Drawer.oCtx.beginPath();
+	let w = Drawer.originalImageOverlayCanvas.width;
+	let h = Drawer.originalImageOverlayCanvas.height;
+    Drawer.originalImageOverlayCtx.clearRect(0, 0, w, h);
+	Drawer.originalImageOverlayCtx.beginPath();
     
 		
-		let columns = Math.round(w/Drawer.REGION_PIXEL_NUMBER);
-		let rows = Math.round(h/Drawer.REGION_PIXEL_NUMBER);
-		
+		let columns = Math.ceil(w/Drawer.REGION_PIXEL_NUMBER);
+		let rows = Math.ceil(h/Drawer.REGION_PIXEL_NUMBER);
 		for(var x = 0; x < columns; x++) {
-			Drawer.oCtx.moveTo(x * Drawer.REGION_PIXEL_NUMBER, 0);
-			Drawer.oCtx.lineTo(x * Drawer.REGION_PIXEL_NUMBER, h);
+			Drawer.originalImageOverlayCtx.moveTo(x * Drawer.REGION_PIXEL_NUMBER, 0);
+			Drawer.originalImageOverlayCtx.lineTo(x * Drawer.REGION_PIXEL_NUMBER, h);
 		}
 		for(var y = 0; y < rows; y++) {
-			Drawer.oCtx.moveTo(0, y * Drawer.REGION_PIXEL_NUMBER);
-			Drawer.oCtx.lineTo(w, y * Drawer.REGION_PIXEL_NUMBER);
+			Drawer.originalImageOverlayCtx.moveTo(0, y * Drawer.REGION_PIXEL_NUMBER);
+			Drawer.originalImageOverlayCtx.lineTo(w, y * Drawer.REGION_PIXEL_NUMBER);
 		}
 		
-		Drawer.oCtx.fillStyle = "rgba(255, 122, 64, 0.5)";
-		Drawer.oCtx.fillRect(Drawer.selectedRegionX * Drawer.REGION_PIXEL_NUMBER,
+		Drawer.originalImageOverlayCtx.fillStyle = "rgba(255, 122, 64, 0.5)";
+		Drawer.originalImageOverlayCtx.fillRect(Drawer.selectedRegionX * Drawer.REGION_PIXEL_NUMBER,
                  Drawer.selectedRegionY * Drawer.REGION_PIXEL_NUMBER,
                  Drawer.REGION_PIXEL_NUMBER,
                  Drawer.REGION_PIXEL_NUMBER);
 				 
-		Drawer.oCtx.strokeStyle="#FFFFFF";
-		Drawer.oCtx.stroke();
+		Drawer.originalImageOverlayCtx.strokeStyle="#FFF";
+		Drawer.originalImageOverlayCtx.stroke();
 }
 
 function selectRegion(e) {
-	let w = Drawer.oCanvas.width;
-	let h = Drawer.oCanvas.height;
+	let w = Drawer.originalImageOverlayCanvas.width;
+	let h = Drawer.originalImageOverlayCanvas.height;
 
-    var rect = Drawer.oCanvas.getBoundingClientRect(),
+    var rect = Drawer.originalImageOverlayCanvas.getBoundingClientRect(),
         mx = e.clientX - rect.left,
         my = e.clientY - rect.top,
         
-        /// get index from mouse position
-        xIndex = Math.round((mx - Drawer.REGION_PIXEL_NUMBER * 0.5) / Drawer.REGION_PIXEL_NUMBER),
-        yIndex = Math.round((my - Drawer.REGION_PIXEL_NUMBER * 0.5) / Drawer.REGION_PIXEL_NUMBER);
-		Drawer.drawRegion(xIndex*Drawer.REGION_PIXEL_NUMBER, yIndex*Drawer.REGION_PIXEL_NUMBER);
-		
-		Drawer.selectedRegionX = xIndex;
-		Drawer.selectedRegionY = yIndex;
-		
+	/// get index from mouse position
+	xIndex = Math.round((mx - Drawer.REGION_PIXEL_NUMBER * 0.5) / Drawer.REGION_PIXEL_NUMBER),
+	yIndex = Math.round((my - Drawer.REGION_PIXEL_NUMBER * 0.5) / Drawer.REGION_PIXEL_NUMBER);
+	Drawer.drawRegion(xIndex*Drawer.REGION_PIXEL_NUMBER, yIndex*Drawer.REGION_PIXEL_NUMBER);
+	
+	Drawer.selectedRegionX = xIndex;
+	Drawer.selectedRegionY = yIndex;
+	Drawer.moveWindow(0, 0);
 }
 function highlight(e) {
-	let w = Drawer.oCanvas.width;
-	let h = Drawer.oCanvas.height;
+	let w = Drawer.originalImageOverlayCanvas.width;
+	let h = Drawer.originalImageOverlayCanvas.height;
 
-    var rect = Drawer.oCanvas.getBoundingClientRect(),
+    var rect = Drawer.originalImageOverlayCanvas.getBoundingClientRect(),
         mx = e.clientX - rect.left,
         my = e.clientY - rect.top,
         
@@ -98,8 +175,8 @@ function highlight(e) {
         yIndex = Math.round((my - Drawer.REGION_PIXEL_NUMBER * 0.5) / Drawer.REGION_PIXEL_NUMBER);
 
     render();
-    Drawer.oCtx.fillStyle = "rgba(255, 255, 255, 0.5)";
-    Drawer.oCtx.fillRect(xIndex * Drawer.REGION_PIXEL_NUMBER,
+    Drawer.originalImageOverlayCtx.fillStyle = "rgba(255, 255, 255, 0.5)";
+    Drawer.originalImageOverlayCtx.fillRect(xIndex * Drawer.REGION_PIXEL_NUMBER,
                  yIndex * Drawer.REGION_PIXEL_NUMBER,
                  Drawer.REGION_PIXEL_NUMBER,
                  Drawer.REGION_PIXEL_NUMBER);
@@ -112,37 +189,52 @@ Drawer.scalePreserveAspectRatio = function(imgW,imgH,maxW,maxH){
 
 Drawer.drawRegion = function(startX, startY) {
 	let s = this.PIXEL_SIZE;
+	let origW = Drawer.originalImageCanvas.width;
+	let origH = Drawer.originalImageCanvas.height;
+	if(startX + Drawer.REGION_PIXEL_NUMBER > origW) {
+		Drawer.windowPixelW = Drawer.REGION_PIXEL_NUMBER - ((startX + Drawer.REGION_PIXEL_NUMBER) - origW);
+	}
+	else {
+		Drawer.windowPixelW = Drawer.REGION_PIXEL_NUMBER;
+	}
 	
-	Drawer.rCanvas.width = s*Drawer.REGION_PIXEL_NUMBER;
-	Drawer.rCanvas.height = s*Drawer.REGION_PIXEL_NUMBER;
-	Drawer.wCanvas.height = s*Drawer.REGION_PIXEL_NUMBER;
-	Drawer.wCanvas.width = s*Drawer.REGION_PIXEL_NUMBER;
-	let pixelData = Drawer.bgCtx.getImageData(startX, startY, Drawer.REGION_PIXEL_NUMBER, Drawer.REGION_PIXEL_NUMBER).data;
+	if(startY + Drawer.REGION_PIXEL_NUMBER > origH) {
+		Drawer.windowPixelH = Drawer.REGION_PIXEL_NUMBER - ((startY + Drawer.REGION_PIXEL_NUMBER) - origH);
+	}
+	else {
+		Drawer.windowPixelH = Drawer.REGION_PIXEL_NUMBER;
+	}
+	console.log(Drawer.windowPixelW)
+	console.log(Drawer.windowPixelH)
+	
+	let pixelData = Drawer.originalImageCtx.getImageData(startX, startY, Drawer.REGION_PIXEL_NUMBER, Drawer.REGION_PIXEL_NUMBER).data;
 	let realArr = [];
 	let c = 0;
 	let sum = 0;
-	// pravilno po4ernqvane trqq da se napravi!
 	for(let i = 0; i < pixelData.length; i++) {
 		if(c < 3) {
 			sum += pixelData[i];
 			c++;
 		}
 		else {
-			realArr.push(sum/3);
+			realArr.push(Math.round(sum/3));
 			sum = 0;
 			c = 0;
 		}
 	}
 	
-	this.rCtx.beginPath();
+	this.originalRegionCtx.beginPath();
 	
 	let x = 0;
 	let y = 0;
 	c = 0;
 	for(let i = 0; i < realArr.length; i++) {
 		let val = realArr[i];
-		this.rCtx.fillStyle = 'rgb(' + [val, val, val] + ')'
-		this.rCtx.fillRect(x, y, s, s);
+		if(val == undefined || val == null) {
+			console.log("nqma pixel na: " + i);
+		}
+		this.originalRegionCtx.fillStyle = 'rgb(' + [val, val, val] + ')'
+		this.originalRegionCtx.fillRect(x, y, s, s);
 		c++;
 		if(c < Drawer.REGION_PIXEL_NUMBER) {
 			x += s;
@@ -153,7 +245,7 @@ Drawer.drawRegion = function(startX, startY) {
 			c = 0;
 		}
 	}
-	this.rCtx.closePath();
+	this.originalRegionCtx.closePath();
 }
 Drawer.window = {
 	x: 0,
@@ -166,75 +258,81 @@ Drawer.drawWindow = function(x, y) {
 	this.window.x = x;
 	this.window.y = y;
 	let drawX = x-s;
-	this.wCtx.beginPath();
+	this.originalRegionWindowCtx.beginPath();
 	for (let i = 0; i < 3; i++, drawX += s) {
 		let drawY = y-s;	
 		for (let z = 0; z < 3; z++, drawY += s) {
-			if(drawX < 0 || drawX > this.wCanvas.width) {
+			if(drawX < 0 || drawX > this.originalRegionWindowCanvas.width) {
 				continue;
 			}
-			if(drawY < 0 || drawY > this.wCanvas.height) {
+			if(drawY < 0 || drawY > this.originalRegionWindowCanvas.height) {
 				continue;
 			}
-			this.wCtx.rect(drawX,drawY,s,s);
+			this.originalRegionWindowCtx.rect(drawX,drawY,s,s);
 		}
 	}
-	this.wCtx.closePath();
-	this.wCtx.strokeStyle="#FF0000";
-	this.wCtx.stroke();
+	this.originalRegionWindowCtx.closePath();
+	this.originalRegionWindowCtx.strokeStyle="#FF0000";
+	this.originalRegionWindowCtx.stroke();
+	
+	this.filteredRegionWindowCtx.beginPath();
+	this.filteredRegionWindowCtx.rect(x,y,s,s);
+	this.filteredRegionWindowCtx.closePath();
+	this.filteredRegionWindowCtx.strokeStyle="#FF0000";
+	this.filteredRegionWindowCtx.stroke();
 }
 
 Drawer.moveWindow = function(x, y) {
-	this.wCtx.clearRect(0, 0, this.wCanvas.width, this.wCanvas.height);
+	this.originalRegionWindowCtx.clearRect(0, 0, this.originalRegionWindowCanvas.width, this.originalRegionWindowCanvas.height);
+	this.filteredRegionWindowCtx.clearRect(0, 0, this.filteredRegionWindowCanvas.width, this.filteredRegionWindowCanvas.height);
 	this.drawWindow(x, y);
 }
 
 Drawer.randomBg = function() {
 	let s = this.PIXEL_SIZE;
-	this.bgCtx.beginPath();
-	for(let x = 0; x < this.bgCanvas.width; x+=s) {
-		for(let y = 0; y < this.bgCanvas.height; y+=s) {
+	this.originalImageCtx.beginPath();
+	for(let x = 0; x < this.originalImageCanvas.width; x+=s) {
+		for(let y = 0; y < this.originalImageCanvas.height; y+=s) {
 			let val = Math.floor(Math.random() * 256);
-			this.bgCtx.fillStyle = 'rgb(' + [val, val, val] + ')'
-			this.bgCtx.fillRect(x, y, s, s);
+			this.originalImageCtx.fillStyle = 'rgb(' + [val, val, val] + ')'
+			this.originalImageCtx.fillRect(x, y, s, s);
 		}
 	}
-	this.bgCtx.closePath();
+	this.originalImageCtx.closePath();
 }
 
 Drawer.arrowMove = function(e) {
 	let s = Drawer.PIXEL_SIZE;
 	let x = Drawer.window.x;
 	let y = Drawer.window.y;
-	// left arrow
-	if(e.keyCode == 37) {	
+	// A
+	if(e.keyCode == 65) {	
 		if(x > 0) {
 			Drawer.moveWindow(x-s, y);
 		}
 	}
-	// right arrow
-	if(e.keyCode == 39) {	
-		if(x < Drawer.wCanvas.width-s) {
+	// D
+	if(e.keyCode == 68) {	
+		if(x < Drawer.windowPixelW*s-s) {
 			Drawer.moveWindow(x+s, y);
 		}
 	}
 	
-	// up arrow
-	if(e.keyCode == 38) {	
+	// W
+	if(e.keyCode == 87) {	
 		if(y > 0) {
 			Drawer.moveWindow(x, y-s);
 		}
 	}
-	// down arrow
-	if(e.keyCode == 40) {	
-		if(y < Drawer.wCanvas.height-s) {
+	// S
+	if(e.keyCode == 83) {	
+		if(y < Drawer.windowPixelH*s-s) {
 			Drawer.moveWindow(x, y+s);
 		}
 	}
 }
 document.addEventListener( "keydown", Drawer.arrowMove, true);
-Drawer.drawBg();
-Drawer.drawWindow(60, 40);
+Drawer.init();
 
 
 function updateMatrix(a, f) {
