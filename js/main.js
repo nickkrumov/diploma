@@ -24,21 +24,24 @@ Drawer.filteredRegionWindowCtx = Drawer.filteredRegionWindowCanvas.getContext("2
 
 /* Constants */
 Drawer.PIXEL_SIZE = 10;
-Drawer.MAX_IMAGE_WIDTH = 240;
-Drawer.REGION_PIXEL_NUMBER = 50;
+Drawer.MAX_IMAGE_WIDTH = 400;
+Drawer.REGION_PIXEL_NUMBER = 40;
+Drawer.AUTO_MOVE_INTERVAL_TIME = 10;
 
 /* Global state */
+Drawer.pixelData = [];
 Drawer.windowPixelW = Drawer.REGION_PIXEL_NUMBER;
 Drawer.windowPixelH = Drawer.REGION_PIXEL_NUMBER;
 Drawer.selectedRegionX = 0;
 Drawer.selectedRegionY = 0;
+Drawer.enabledAutoMove = false;
 
 Drawer.originalImageOverlayCanvas.onmousemove = highlight;
 Drawer.originalImageOverlayCanvas.onmousedown = selectRegion;
 
 Drawer.init = function() {
 	var img = new Image();
-	img.src = "images/flower.jpg";
+	img.src = "images/lion.jpg";
 	img.crossOrigin="anonymous";
 	img.onload = function(){ 
 		let scale = Drawer.MAX_IMAGE_WIDTH/img.width;
@@ -96,16 +99,35 @@ Drawer.init = function() {
 		Drawer.filteredRegionWindowCanvas.style.left = (regionSize + margin + 50) + "px";
 		
 		Drawer.originalImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);  
-		grayscale();
+		obtainPixelData();
 		render();
 		Drawer.drawRegion(0, 0);
 		Drawer.drawWindow(0, 0);
+		
+		var mask = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
+		let data = applyFilter(mask);
+		let newData = [];
+		for(let i = 0; i < data.length; i++) {
+			let val = data[i];
+			newData.push(val);
+			newData.push(val);
+			newData.push(val);
+			newData.push(255);
+		}
+		var imageData = Drawer.originalImageCtx.getImageData(0, 0, Drawer.originalImageCanvas.width, Drawer.originalImageCanvas.height);
+		var d = imageData.data;
+		
+		for(let i = 0; i < d.length; i++) {
+			d[i] = newData[i];
+		}
+		Drawer.filteredImageCtx.putImageData(imageData, 0, 0);
 	}
 }
-function grayscale() {
+function obtainPixelData() {
 	var imageData = Drawer.originalImageCtx.getImageData(0, 0, Drawer.originalImageCanvas.width, Drawer.originalImageCanvas.height);
+	console.log(imageData);
         var data = imageData.data;
-
+		// convert to grayscale
         for(var i = 0; i < data.length; i += 4) {
           var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
           // red
@@ -114,6 +136,7 @@ function grayscale() {
           data[i + 1] = brightness;
           // blue
           data[i + 2] = brightness;
+		  Drawer.pixelData.push(brightness);
         }
 	Drawer.originalImageCtx.putImageData(imageData, 0, 0);
 }
@@ -161,6 +184,9 @@ function selectRegion(e) {
 	Drawer.selectedRegionX = xIndex;
 	Drawer.selectedRegionY = yIndex;
 	Drawer.moveWindow(0, 0);
+	if(Drawer.enabledAutoMove) {
+		Drawer.autoMove(Drawer.AUTO_MOVE_INTERVAL_TIME);
+	}
 }
 function highlight(e) {
 	let w = Drawer.originalImageOverlayCanvas.width;
@@ -331,7 +357,90 @@ Drawer.arrowMove = function(e) {
 		}
 	}
 }
+Drawer.autoMove = function(time) {
+	//TODO: disable arrow move!!!
+	clearInterval(Drawer.autoMoveInterval);
+	var x = 0;
+	var y = 0;
+	var s = Drawer.PIXEL_SIZE;
+	Drawer.autoMoveInterval = setInterval(function() {
+		console.log("move");
+		Drawer.moveWindow(x, y);
+		if(y >= Drawer.windowPixelH*s - s && x >= Drawer.windowPixelW*s - s) {
+			clearInterval(Drawer.autoMoveInterval);
+		}
+		if(x >= Drawer.windowPixelW*s - s) {
+			y += s;
+			x = 0;
+		}
+		else {
+			x += s;
+		}
+	}, time);
+}
+
+function applyFilter(mask) {
+	let w = Drawer.originalImageCanvas.width;
+	let h = Drawer.originalImageCanvas.height;
+	/*for(let x = 0; x < w; x++) {
+		for(let y = 0; y < h; y++) {
+			let val = Drawer.pixelData[x+y*w];
+		}
+	}*/
+	var newPixelData = [];
+	for(let i = 0; i < Drawer.pixelData.length; i++) {	
+		let these = [
+		  Drawer.pixelData[i - w  - 1] || 0,
+		  Drawer.pixelData[i - w]     || 0,
+		  Drawer.pixelData[i - w + 1] || 0,
+		  Drawer.pixelData[i - 1]         || 0,
+		  Drawer.pixelData[i],
+		  Drawer.pixelData[i + 1]         || 0,
+		  Drawer.pixelData[i + w - 1] || 0,
+		  Drawer.pixelData[i + w]     || 0,
+		  Drawer.pixelData[i + w + 1] || 0
+		];	
+		let res = 0;
+		for (let j = 0; j < 9; j++) {
+		  res += these[j] * mask[j];
+		}	
+		if(res > 255) {
+			res = 255;
+		}
+		if(res < 0) {
+			res = 0
+		}
+		newPixelData.push(res);
+	}
+	return newPixelData;
+}
+
+function calcPixelValue(x, y, h, w, mask) {
+	let maskSize = Math.sqrt(mask.length);
+	let offset = Math.floor(maskSize / 2);
+	for(let i = 0; i < mask.length; i++) {
+		for(let z = -1; z <= 1; z++) {
+			
+		}
+		x + (y-1)*w - 1
+		x + (y-1)*w
+		x + (y-1)*w + 1
+		x + (y)*w - 1
+		x + (y)*w
+		x + (y)*w + 1
+		x + (y+1)*w - 1
+		x + (y+1)*w
+		x + (y+1)*w + 1
+		let val = Drawer.pixelData[x+y*w];
+	}
+	console.log(maskSize);
+	console.log(offset);
+	let val = Drawer.pixelData[x+y*w];
+}
+
+// add or remove this listener depending on enabledAutoMove
 document.addEventListener( "keydown", Drawer.arrowMove, true);
+//Drawer.autoMove(500);
 Drawer.init();
 
 
