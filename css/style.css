@@ -2,11 +2,24 @@
   position: absolute;
   top: 0;
   left: 0;
+  border: 1px solid blue;
+}
+#overlay-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 #window-canvas {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 260px;
+  z-index: 1000;	
+}
+#region-canvas {
+  position: absolute;
+  top: 0;
+  left: 260px;
+  border: 1px solid green;
 }
 
 /* matrix --------------------*/
