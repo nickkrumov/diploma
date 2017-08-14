@@ -41,7 +41,7 @@ Drawer.originalImageOverlayCanvas.onmousedown = selectRegion;
 
 Drawer.init = function() {
 	var img = new Image();
-	img.src = "images/lion.jpg";
+	img.src = "images/flower.jpg";
 	img.crossOrigin="anonymous";
 	img.onload = function(){ 
 		let scale = Drawer.MAX_IMAGE_WIDTH/img.width;
