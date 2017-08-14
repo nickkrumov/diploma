@@ -382,27 +382,20 @@ Drawer.autoMove = function(time) {
 function applyFilter(mask) {
 	let w = Drawer.originalImageCanvas.width;
 	let h = Drawer.originalImageCanvas.height;
-	/*for(let x = 0; x < w; x++) {
-		for(let y = 0; y < h; y++) {
-			let val = Drawer.pixelData[x+y*w];
-		}
-	}*/
+	let maskSize = Math.sqrt(mask.length);
+	let offset = Math.floor(maskSize / 2);
 	var newPixelData = [];
 	for(let i = 0; i < Drawer.pixelData.length; i++) {	
-		let these = [
-		  Drawer.pixelData[i - w  - 1] || 0,
-		  Drawer.pixelData[i - w]     || 0,
-		  Drawer.pixelData[i - w + 1] || 0,
-		  Drawer.pixelData[i - 1]         || 0,
-		  Drawer.pixelData[i],
-		  Drawer.pixelData[i + 1]         || 0,
-		  Drawer.pixelData[i + w - 1] || 0,
-		  Drawer.pixelData[i + w]     || 0,
-		  Drawer.pixelData[i + w + 1] || 0
-		];	
+		let currentPixels = [];
+		for(let row = -offset; row <= offset; row++) {
+			for(let col = -offset; col <= offset; col++) {
+				let p = Drawer.pixelData[i + w*row + col] || 0;
+				currentPixels.push(p);
+			}
+		}
 		let res = 0;
-		for (let j = 0; j < 9; j++) {
-		  res += these[j] * mask[j];
+		for (let j = 0; j < mask.length; j++) {
+		  res += currentPixels[j] * mask[j];
 		}	
 		if(res > 255) {
 			res = 255;
@@ -413,29 +406,6 @@ function applyFilter(mask) {
 		newPixelData.push(res);
 	}
 	return newPixelData;
-}
-
-function calcPixelValue(x, y, h, w, mask) {
-	let maskSize = Math.sqrt(mask.length);
-	let offset = Math.floor(maskSize / 2);
-	for(let i = 0; i < mask.length; i++) {
-		for(let z = -1; z <= 1; z++) {
-			
-		}
-		x + (y-1)*w - 1
-		x + (y-1)*w
-		x + (y-1)*w + 1
-		x + (y)*w - 1
-		x + (y)*w
-		x + (y)*w + 1
-		x + (y+1)*w - 1
-		x + (y+1)*w
-		x + (y+1)*w + 1
-		let val = Drawer.pixelData[x+y*w];
-	}
-	console.log(maskSize);
-	console.log(offset);
-	let val = Drawer.pixelData[x+y*w];
 }
 
 // add or remove this listener depending on enabledAutoMove
