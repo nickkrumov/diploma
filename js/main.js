@@ -101,6 +101,8 @@ Drawer.init = function() {
 		
 		Drawer.originalImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);  
 		obtainPixelData();
+		Drawer.selectedRegionX = 0;
+		Drawer.selectedRegionY = 0;
 		render();
 		Drawer.drawRegion(0, 0);
 		Drawer.drawWindow(0, 0);
