@@ -75,28 +75,28 @@ Drawer.init = function() {
 		Drawer.filteredRegionWindowCanvas.height = regionSize;
 		Drawer.filteredRegionWindowCanvas.width = regionSize;
 		
-		let margin = 20;
+		let margin = 100;
 		
 		Drawer.originalImageCanvas.style.top = margin + "px";
-		Drawer.originalImageCanvas.style.left = margin + "px";
+		//Drawer.originalImageCanvas.style.left = margin + "px";
 		
 		Drawer.originalImageOverlayCanvas.style.top = margin + "px";
-		Drawer.originalImageOverlayCanvas.style.left = margin + "px";
+		//Drawer.originalImageOverlayCanvas.style.left = margin + "px";
 		
 		Drawer.filteredImageCanvas.style.top = margin + "px";
-		Drawer.filteredImageCanvas.style.left = (w + margin + 50) + "px";
+		Drawer.filteredImageCanvas.style.left = (w + /*margin*/ + 50) + "px";
 		
 		Drawer.originalRegionCanvas.style.top = (h + margin + 20) + "px";
-		Drawer.originalRegionCanvas.style.left = margin + "px";
+		//Drawer.originalRegionCanvas.style.left = margin + "px";
 		
 		Drawer.originalRegionWindowCanvas.style.top = (h + margin + 20) + "px";
-		Drawer.originalRegionWindowCanvas.style.left = margin + "px";
+		//Drawer.originalRegionWindowCanvas.style.left = margin + "px";
 		
 		Drawer.filteredRegionCanvas.style.top = (h + margin + 20) + "px";
-		Drawer.filteredRegionCanvas.style.left = (regionSize + margin + 50) + "px";
+		Drawer.filteredRegionCanvas.style.left = (regionSize + /*margin*/ + 50) + "px";
 		
 		Drawer.filteredRegionWindowCanvas.style.top = (h + margin + 20) + "px";
-		Drawer.filteredRegionWindowCanvas.style.left = (regionSize + margin + 50) + "px";
+		Drawer.filteredRegionWindowCanvas.style.left = (regionSize + /*margin*/ + 50) + "px";
 		
 		Drawer.originalImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);  
 		obtainPixelData();

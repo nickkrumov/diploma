@@ -89,3 +89,40 @@
 }
 
 /* --------------------- */
+
+/* menu --------------------*/
+
+/*#menu { 
+	position: relative;
+	top: 720px;
+}*/
+
+#menu form {
+	display: inline-block;
+}
+
+#titles {
+	font-weight: bold;
+}
+
+#menu_upload, #upload {
+	display: inline-block;
+	width: 300px;
+}
+
+#menu_mode, #mode {
+	display: inline-block;
+	width: 150px;
+}
+
+#menu_filter, #filters {
+	display: inline-block;
+	width: 150px;
+}
+
+#menu_speed, #speed {
+	display: inline-block;
+	width: 150px;
+}
+
+/* --------------------- */

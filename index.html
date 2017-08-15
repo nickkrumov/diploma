@@ -7,6 +7,63 @@
 </head>
 
 <body>
+
+<div id="menu">
+	
+	<div id="titles">
+		<span id="menu_upload">Upload image</span>
+		<span id="menu_mode">Mode</span>
+		<span id="menu_filter">Filter</span>
+		<span id="menu_speed">Simulation interval</span>
+	</div>
+
+	<span id="upload">
+		<input type="file" name="file" accept="image/x-png, image/gif, image/jpeg">
+	</span>
+	
+	<span id="mode">
+		<form id="mode_select">
+		  <input type="radio" name="mode" value="manual" id="manual" checked>Manual<br>
+		  <input type="radio" name="mode" value="auto" id="auto">Automatic<br>
+		</form>
+	</span>
+	
+	<span id="filters">
+		<form action="">
+		  <select name="filters">
+			<option value="filter" selected>Select filter...</option>
+			<option value="1">sharpen</option>
+			<option value="2">blur</option>
+			<option value="3">outline</option>
+			<option value="4">emboss</option>
+			<option value="5">identity</option>
+			<option value="6">left sobel</option>
+			<option value="7">right sobel</option>
+			<option value="8">bottom sobel</option>
+			<option value="9">top sobel</option>
+		  </select>
+		</form>
+	</span>
+	
+	<span id="speed">
+		<form action="">
+		  <select name="speed">
+			<option value="speed" selected>Select interval...</option>
+			<option value="100">100 ms</option>
+			<option value="200">200 ms</option>
+			<option value="300">300 ms</option>
+			<option value="400">400 ms</option>
+			<option value="500">500 ms</option>
+			<option value="1000">1 sec</option>
+			<option value="2000">2 secs</option>
+			<option value="3000">3 secs</option>
+			<option value="4000">4 secs</option>
+			<option value="5000">5 secs</option>
+		  </select>
+		</form>
+	</span>
+</div>
+
 <canvas id="original-image-canvas"></canvas>
 <canvas id="original-image-overlay-canvas"></canvas>
 <canvas id="filtered-image-canvas"></canvas>
