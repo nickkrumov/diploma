@@ -128,6 +128,7 @@ function obtainPixelData() {
 	var imageData = Drawer.originalImageCtx.getImageData(0, 0, Drawer.originalImageCanvas.width, Drawer.originalImageCanvas.height);
 	console.log(imageData);
         var data = imageData.data;
+		Drawer.pixelData = []; //resets pixelData
 		// convert to grayscale
         for(var i = 0; i < data.length; i += 4) {
           var brightness = 0.34 * data[i] + 0.5 * data[i + 1] + 0.16 * data[i + 2];
