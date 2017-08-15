@@ -35,13 +35,14 @@ Drawer.windowPixelH = Drawer.REGION_PIXEL_NUMBER;
 Drawer.selectedRegionX = 0;
 Drawer.selectedRegionY = 0;
 Drawer.enabledAutoMove = false;
+Drawer.imgSrc = null;
 
 Drawer.originalImageOverlayCanvas.onmousemove = highlight;
 Drawer.originalImageOverlayCanvas.onmousedown = selectRegion;
 
 Drawer.init = function() {
 	var img = new Image();
-	img.src = "images/flower.jpg";
+	img.src = Drawer.imgSrc;
 	img.crossOrigin="anonymous";
 	img.onload = function(){ 
 		let scale = Drawer.MAX_IMAGE_WIDTH/img.width;
@@ -408,10 +409,25 @@ function applyFilter(mask) {
 	return newPixelData;
 }
 
+function loadImg(input) {
+	if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+			Drawer.imgSrc = e.target.result;
+			Drawer.init();
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+document.getElementById("img_upload").onchange = function() {
+	loadImg(this);
+}
+
 // add or remove this listener depending on enabledAutoMove
 document.addEventListener( "keydown", Drawer.arrowMove, true);
 //Drawer.autoMove(500);
-Drawer.init();
+//Drawer.init();
 
 
 function updateMatrix(a, f) {
