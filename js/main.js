@@ -106,26 +106,31 @@ Drawer.init = function() {
 		render();
 		Drawer.drawRegion(0, 0);
 		Drawer.drawWindow(0, 0);
-		
-		var mask = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
-		let data = applyFilter(mask);
-		let newData = [];
-		for(let i = 0; i < data.length; i++) {
-			let val = data[i];
-			newData.push(val);
-			newData.push(val);
-			newData.push(val);
-			newData.push(255);
-		}
-		var imageData = Drawer.originalImageCtx.getImageData(0, 0, Drawer.originalImageCanvas.width, Drawer.originalImageCanvas.height);
-		var d = imageData.data;
-		
-		for(let i = 0; i < d.length; i++) {
-			d[i] = newData[i];
-		}
-		Drawer.filteredImageCtx.putImageData(imageData, 0, 0);
+		Drawer.drawFilteredImage();
 	}
 }
+
+Drawer.drawFilteredImage = function() {
+	let selecteFilterOption = document.getElementsByName("filters")[0].value;
+	let mask = filters.mask[selecteFilterOption];
+	let data = filters.applyFilter(mask);
+	let newData = [];
+	for(let i = 0; i < data.length; i++) {
+		let val = data[i];
+		newData.push(val);
+		newData.push(val);
+		newData.push(val);
+		newData.push(255);
+	}
+	var imageData = Drawer.originalImageCtx.getImageData(0, 0, Drawer.originalImageCanvas.width, Drawer.originalImageCanvas.height);
+	var d = imageData.data;
+	
+	for(let i = 0; i < d.length; i++) {
+		d[i] = newData[i];
+	}
+	Drawer.filteredImageCtx.putImageData(imageData, 0, 0);
+}
+
 function obtainPixelData() {
 	var imageData = Drawer.originalImageCtx.getImageData(0, 0, Drawer.originalImageCanvas.width, Drawer.originalImageCanvas.height);
 	console.log(imageData);
@@ -383,35 +388,6 @@ Drawer.autoMove = function(time) {
 	}, time);
 }
 
-function applyFilter(mask) {
-	let w = Drawer.originalImageCanvas.width;
-	let h = Drawer.originalImageCanvas.height;
-	let maskSize = Math.sqrt(mask.length);
-	let offset = Math.floor(maskSize / 2);
-	var newPixelData = [];
-	for(let i = 0; i < Drawer.pixelData.length; i++) {	
-		let currentPixels = [];
-		for(let row = -offset; row <= offset; row++) {
-			for(let col = -offset; col <= offset; col++) {
-				let p = Drawer.pixelData[i + w*row + col] || 0;
-				currentPixels.push(p);
-			}
-		}
-		let res = 0;
-		for (let j = 0; j < mask.length; j++) {
-		  res += currentPixels[j] * mask[j];
-		}	
-		if(res > 255) {
-			res = 255;
-		}
-		if(res < 0) {
-			res = 0
-		}
-		newPixelData.push(res);
-	}
-	return newPixelData;
-}
-
 function loadImg(input) {
 	if (input.files && input.files[0]) {
         var reader = new FileReader();
@@ -425,6 +401,10 @@ function loadImg(input) {
 
 document.getElementById("img_upload").onchange = function() {
 	loadImg(this);
+}
+
+document.getElementsByName("filters")[0].onchange = function() {
+	Drawer.drawFilteredImage();
 }
 
 // add or remove this listener depending on enabledAutoMove
