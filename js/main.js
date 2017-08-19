@@ -406,8 +406,6 @@ document.getElementsByName("filters")[0].onchange = function() {
 	Drawer.drawFilteredImage();
 }
 
-document.addEventListener( "keydown", Drawer.arrowMove, true);
-
 $('input[type=radio][name=mode]').change(function() {
 	if (this.value == 'manual') {
 		Drawer.enabledAutoMove = false;
