@@ -107,6 +107,7 @@ Drawer.init = function() {
 		Drawer.drawRegion(0, 0);
 		Drawer.drawWindow(0, 0);
 		Drawer.drawFilteredImage();
+		checkMode();
 	}
 }
 
@@ -193,9 +194,7 @@ function selectRegion(e) {
 	Drawer.selectedRegionX = xIndex;
 	Drawer.selectedRegionY = yIndex;
 	Drawer.moveWindow(0, 0);
-	if(Drawer.enabledAutoMove) {
-		Drawer.autoMove(Drawer.AUTO_MOVE_INTERVAL_TIME);
-	}
+	checkMode();
 }
 function highlight(e) {
 	let w = Drawer.originalImageOverlayCanvas.width;
@@ -366,8 +365,8 @@ Drawer.arrowMove = function(e) {
 		}
 	}
 }
+
 Drawer.autoMove = function(time) {
-	//TODO: disable arrow move!!!
 	clearInterval(Drawer.autoMoveInterval);
 	var x = 0;
 	var y = 0;
@@ -407,20 +406,31 @@ document.getElementsByName("filters")[0].onchange = function() {
 	Drawer.drawFilteredImage();
 }
 
+document.addEventListener( "keydown", Drawer.arrowMove, true);
+
 $('input[type=radio][name=mode]').change(function() {
 	if (this.value == 'manual') {
 		Drawer.enabledAutoMove = false;
 	} else if (this.value == 'auto') {
 		Drawer.enabledAutoMove = true;
     }
-	console.log(Drawer.enabledAutoMove);
+	checkMode();
 });
 
 // add or remove this listener depending on enabledAutoMove
-document.addEventListener( "keydown", Drawer.arrowMove, true);
+//document.addEventListener( "keydown", Drawer.arrowMove, true);
 //Drawer.autoMove(500);
 //Drawer.init();
 
+function checkMode() {
+	if(Drawer.enabledAutoMove) {
+		Drawer.autoMove(Drawer.AUTO_MOVE_INTERVAL_TIME);
+		document.removeEventListener("keydown", Drawer.arrowMove, true);
+	} else {
+		clearInterval(Drawer.autoMoveInterval);
+		document.addEventListener("keydown", Drawer.arrowMove, true);
+	}
+}
 
 function updateMatrix(a, f) {
 	let cells = $(".cell");
