@@ -407,6 +407,15 @@ document.getElementsByName("filters")[0].onchange = function() {
 	Drawer.drawFilteredImage();
 }
 
+$('input[type=radio][name=mode]').change(function() {
+	if (this.value == 'manual') {
+		Drawer.enabledAutoMove = false;
+	} else if (this.value == 'auto') {
+		Drawer.enabledAutoMove = true;
+    }
+	console.log(Drawer.enabledAutoMove);
+});
+
 // add or remove this listener depending on enabledAutoMove
 document.addEventListener( "keydown", Drawer.arrowMove, true);
 //Drawer.autoMove(500);
