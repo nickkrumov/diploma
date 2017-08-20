@@ -117,9 +117,35 @@ Drawer.init = function() {
 	}
 }
 
+function showCustomFilterInput() {
+	let input = document.getElementById("custom_filter_input");
+	input.style.visibility = "visible";
+	
+	let button = document.getElementById("custom_filter_button");
+	button.style.visibility = "visible";
+}
+function hideCustomFilterInput() {
+	let input = document.getElementById("custom_filter_input");
+	input.style.visibility = "hidden";
+
+	let button = document.getElementById("custom_filter_button");
+	button.style.visibility = "hidden";
+}
+function applyCustomFilter() {
+	Drawer.drawFilteredImage();
+}
+
 Drawer.drawFilteredImage = function() {
-	let selecteFilterOption = document.getElementsByName("filters")[0].value;
-	let mask = filters.mask[selecteFilterOption];
+	let selectedFilterOption = document.getElementsByName("filters")[0].value;
+	let mask = [];
+	if(selectedFilterOption == "custom") {
+		let input = document.getElementById("custom_filter_input");
+		mask = JSON.parse(input.value);
+	}
+	else {
+		mask = filters.mask[selectedFilterOption];
+	}
+	console.log(mask);
 	Drawer.selectedMask = mask;
 	let data = filters.applyFilter(mask);
 	let newData = [];
@@ -513,7 +539,17 @@ document.getElementById("img_upload").onchange = function() {
 }
 
 document.getElementsByName("filters")[0].onchange = function() {
-	Drawer.drawFilteredImage();
+	// let selectedFilterOption = document.getElementsByName("filters")[0].value;
+	if(this.value == "custom") {
+		showCustomFilterInput();
+	}
+	else {
+		hideCustomFilterInput();
+		Drawer.drawFilteredImage();
+	}
+}
+document.getElementsByName("speed")[0].onchange = function() {
+	Drawer.AUTO_MOVE_INTERVAL_TIME = this.value;
 }
 
 $('input[type=radio][name=mode]').change(function() {

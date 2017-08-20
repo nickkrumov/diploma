@@ -13,8 +13,8 @@
 	<div id="titles">
 		<span id="menu_upload">Upload image</span>
 		<span id="menu_mode">Mode</span>
-		<span id="menu_filter">Filter</span>
 		<span id="menu_speed">Simulation interval</span>
+		<span id="menu_filter">Filter</span>
 	</div>
 
 	<span id="upload">
@@ -27,7 +27,27 @@
 		  <input type="radio" name="mode" value="auto" id="auto">Automatic<br>
 		</form>
 	</span>
-	
+		
+	<span id="speed">
+		<form action="">
+		  <select name="speed">
+			<option value="1">1 ms</option>
+			<option value="5">5 ms</option>
+			<option value="10">10 ms</option>
+			<option value="100" selected>100 ms</option>
+			<option value="200">200 ms</option>
+			<option value="300">300 ms</option>
+			<option value="400">400 ms</option>
+			<option value="500">500 ms</option>
+			<option value="1000">1 sec</option>
+			<option value="2000">2 secs</option>
+			<option value="3000">3 secs</option>
+			<option value="4000">4 secs</option>
+			<option value="5000">5 secs</option>
+		  </select>
+		</form>
+	</span>
+
 	<span id="filters">
 		<form action="">
 		  <select name="filters">
@@ -40,25 +60,10 @@
 			<option value="rightsobel">right sobel</option>
 			<option value="bottomsobel">bottom sobel</option>
 			<option value="topsobel">top sobel</option>
+			<option value="custom">custom</option>
 		  </select>
-		</form>
-	</span>
-	
-	<span id="speed">
-		<form action="">
-		  <select name="speed">
-			<option value="speed" selected>Select interval...</option>
-			<option value="100">100 ms</option>
-			<option value="200">200 ms</option>
-			<option value="300">300 ms</option>
-			<option value="400">400 ms</option>
-			<option value="500">500 ms</option>
-			<option value="1000">1 sec</option>
-			<option value="2000">2 secs</option>
-			<option value="3000">3 secs</option>
-			<option value="4000">4 secs</option>
-			<option value="5000">5 secs</option>
-		  </select>
+		  <input id="custom_filter_input" type="text" name="custom_filter" style="visibility: hidden;"/>
+		  <button type="button" id="custom_filter_button" style="visibility: hidden;" onClick="applyCustomFilter()">apply</button>
 		</form>
 	</span>
 </div>
