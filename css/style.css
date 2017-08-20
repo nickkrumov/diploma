@@ -32,10 +32,9 @@
 
 /* matrix --------------------*/
 
-.matrix {
-	position: relative;
-	top: 1250px;
-	display: inline-block;
+#matrix {
+	position: absolute;
+	visibility: hidden;
 	width: 185px;
 	height: 190px;
 }

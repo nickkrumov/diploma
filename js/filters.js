@@ -10,8 +10,15 @@ filters.applyFilter = function(mask) {
 		let currentPixels = [];
 		for(let row = -offset; row <= offset; row++) {
 			for(let col = -offset; col <= offset; col++) {
-				let p = Drawer.pixelData[i + w*row + col] || 0;
-				currentPixels.push(p);
+				let index = i + w*row + col;
+				let p = Drawer.pixelData[index] || 0;
+				if(i % w == 0 && col < 0) {
+					p = 0;
+				}
+				if((i % w == (w-1)) && col > 0) {
+					p = 0;
+				}
+				currentPixels.push(Math.round(p));
 			}
 		}
 		let res = 0;

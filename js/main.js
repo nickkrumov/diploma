@@ -30,6 +30,7 @@ Drawer.AUTO_MOVE_INTERVAL_TIME = 10;
 
 /* Global state */
 Drawer.pixelData = [];
+Drawer.selectedMask = [];
 Drawer.windowPixelW = Drawer.REGION_PIXEL_NUMBER;
 Drawer.windowPixelH = Drawer.REGION_PIXEL_NUMBER;
 Drawer.selectedRegionX = 0;
@@ -99,14 +100,19 @@ Drawer.init = function() {
 		Drawer.filteredRegionWindowCanvas.style.top = (h + margin + 20) + "px";
 		Drawer.filteredRegionWindowCanvas.style.left = (regionSize + /*margin*/ + 50) + "px";
 		
+		let matrix = document.getElementById("matrix");
+		matrix.style.top = (regionSize + h + margin + 40) + "px";
+		matrix.style.visibility = "visible";
+		
 		Drawer.originalImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);  
 		obtainPixelData();
 		Drawer.selectedRegionX = 0;
 		Drawer.selectedRegionY = 0;
 		render();
+		Drawer.drawFilteredImage();
 		Drawer.drawRegion(0, 0);
 		Drawer.drawWindow(0, 0);
-		Drawer.drawFilteredImage();
+		Drawer.drawFilteredRegion(0, 0);
 		checkMode();
 	}
 }
@@ -114,6 +120,7 @@ Drawer.init = function() {
 Drawer.drawFilteredImage = function() {
 	let selecteFilterOption = document.getElementsByName("filters")[0].value;
 	let mask = filters.mask[selecteFilterOption];
+	Drawer.selectedMask = mask;
 	let data = filters.applyFilter(mask);
 	let newData = [];
 	for(let i = 0; i < data.length; i++) {
@@ -352,6 +359,7 @@ Drawer.drawWindow = function(x, y) {
 	let s = this.PIXEL_SIZE;
 	x = x - x%s;	
 	y = y - y%s;
+	Drawer.extractMatrix(x, y);
 	this.window.x = x;
 	this.window.y = y;
 	let drawX = x-s;
@@ -377,6 +385,32 @@ Drawer.drawWindow = function(x, y) {
 	this.filteredRegionWindowCtx.closePath();
 	this.filteredRegionWindowCtx.strokeStyle="#FF0000";
 	this.filteredRegionWindowCtx.stroke();
+}
+
+Drawer.extractMatrix = function(x, y) {
+	let w = Drawer.originalImageCanvas.width;
+	let offsetX = x/Drawer.PIXEL_SIZE;
+	let offsetY = y/Drawer.PIXEL_SIZE;
+	let realX = offsetX + Drawer.selectedRegionX*Drawer.REGION_PIXEL_NUMBER;
+	let realY = offsetY + Drawer.selectedRegionY*Drawer.REGION_PIXEL_NUMBER;
+	let selectedPixel = realY*w + realX;
+	let currentPixels = [];
+	let offset = 1;
+	// console.log("x:" + realX + ", y: " + realY + ", " + selectedPixel);
+	for(let row = -offset; row <= offset; row++) {
+		for(let col = -offset; col <= offset; col++) {
+			let index = selectedPixel + w*row + col;
+			let p = Drawer.pixelData[index] || 0;
+			if(selectedPixel % w == 0 && col < 0) {
+				p = 0;
+			}
+			if((selectedPixel % w == (w-1)) && col > 0) {
+				p = 0;
+			}
+			currentPixels.push(Math.round(p));
+		}
+	}
+	Drawer.updateMatrix(currentPixels, Drawer.selectedMask);
 }
 
 Drawer.moveWindow = function(x, y) {
@@ -506,7 +540,7 @@ function checkMode() {
 	}
 }
 
-function updateMatrix(a, f) {
+Drawer.updateMatrix = function(a, f) {
 	let cells = $(".cell");
 	let filter = $(".filter_val");
 	let res = document.getElementById("result_cell");
@@ -535,4 +569,4 @@ function updateMatrix(a, f) {
 	res.style.color = txt;
 }
 
-updateMatrix([10,10,10,80,160,2,4,4,45],[1,1,1,2,2,2,-3,3,-6]);
+// Drawer.updateMatrix([10,10,10,80,160,2,4,4,45],[1,1,1,2,2,2,-3,3,-6]);
