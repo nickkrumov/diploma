@@ -134,7 +134,6 @@ Drawer.drawFilteredImage = function() {
 
 function obtainPixelData() {
 	var imageData = Drawer.originalImageCtx.getImageData(0, 0, Drawer.originalImageCanvas.width, Drawer.originalImageCanvas.height);
-	console.log(imageData);
         var data = imageData.data;
 		Drawer.pixelData = []; //resets pixelData
 		// convert to grayscale
@@ -190,10 +189,17 @@ function selectRegion(e) {
 	xIndex = Math.round((mx - Drawer.REGION_PIXEL_NUMBER * 0.5) / Drawer.REGION_PIXEL_NUMBER),
 	yIndex = Math.round((my - Drawer.REGION_PIXEL_NUMBER * 0.5) / Drawer.REGION_PIXEL_NUMBER);
 	Drawer.drawRegion(xIndex*Drawer.REGION_PIXEL_NUMBER, yIndex*Drawer.REGION_PIXEL_NUMBER);
+	if(Drawer.enabledAutoMove) {
+		Drawer.filteredRegionCtx.clearRect(0, 0, Drawer.filteredRegionCanvas.width, Drawer.filteredRegionCanvas.height);
+	}
+	else {
+		Drawer.drawFilteredRegion(xIndex*Drawer.REGION_PIXEL_NUMBER, yIndex*Drawer.REGION_PIXEL_NUMBER);
+	}
 	
 	Drawer.selectedRegionX = xIndex;
 	Drawer.selectedRegionY = yIndex;
 	Drawer.moveWindow(0, 0);
+	render();
 	checkMode();
 }
 function highlight(e) {
@@ -238,8 +244,6 @@ Drawer.drawRegion = function(startX, startY) {
 	else {
 		Drawer.windowPixelH = Drawer.REGION_PIXEL_NUMBER;
 	}
-	console.log(Drawer.windowPixelW)
-	console.log(Drawer.windowPixelH)
 	
 	let pixelData = Drawer.originalImageCtx.getImageData(startX, startY, Drawer.REGION_PIXEL_NUMBER, Drawer.REGION_PIXEL_NUMBER).data;
 	let realArr = [];
@@ -269,6 +273,65 @@ Drawer.drawRegion = function(startX, startY) {
 		}
 		this.originalRegionCtx.fillStyle = 'rgb(' + [val, val, val] + ')'
 		this.originalRegionCtx.fillRect(x, y, s, s);
+		c++;
+		if(c < Drawer.REGION_PIXEL_NUMBER) {
+			x += s;
+		}
+		else {
+			x = 0;
+			y += s;
+			c = 0;
+		}
+	}
+	this.originalRegionCtx.closePath();
+}
+Drawer.drawFilteredRegion = function(startX, startY) {
+	let s = this.PIXEL_SIZE;
+	let origW = Drawer.originalImageCanvas.width;
+	let origH = Drawer.originalImageCanvas.height;
+	if(startX + Drawer.REGION_PIXEL_NUMBER > origW) {
+		Drawer.windowPixelW = Drawer.REGION_PIXEL_NUMBER - ((startX + Drawer.REGION_PIXEL_NUMBER) - origW);
+	}
+	else {
+		Drawer.windowPixelW = Drawer.REGION_PIXEL_NUMBER;
+	}
+	
+	if(startY + Drawer.REGION_PIXEL_NUMBER > origH) {
+		Drawer.windowPixelH = Drawer.REGION_PIXEL_NUMBER - ((startY + Drawer.REGION_PIXEL_NUMBER) - origH);
+	}
+	else {
+		Drawer.windowPixelH = Drawer.REGION_PIXEL_NUMBER;
+	}
+	
+	let filteredPixelData = Drawer.filteredImageCtx.getImageData(startX, startY, Drawer.REGION_PIXEL_NUMBER, Drawer.REGION_PIXEL_NUMBER).data;
+	let filteredArr = [];
+	let c = 0;
+	let sum = 0;
+	
+	for(let i = 0; i < filteredPixelData.length; i++) {
+		if(c < 3) {
+			sum += filteredPixelData[i];
+			c++;
+		}
+		else {
+			filteredArr.push(Math.round(sum/3));
+			sum = 0;
+			c = 0;
+		}
+	}
+	
+	this.filteredRegionCtx.beginPath();
+	
+	let x = 0;
+	let y = 0;
+	c = 0;
+	for(let i = 0; i < filteredArr.length; i++) {
+		let val = filteredArr[i];
+		if(val == undefined || val == null) {
+			console.log("nqma pixel na: " + i);
+		}
+		this.filteredRegionCtx.fillStyle = 'rgb(' + [val, val, val] + ')'
+		this.filteredRegionCtx.fillRect(x, y, s, s);
 		c++;
 		if(c < Drawer.REGION_PIXEL_NUMBER) {
 			x += s;
@@ -372,8 +435,8 @@ Drawer.autoMove = function(time) {
 	var y = 0;
 	var s = Drawer.PIXEL_SIZE;
 	Drawer.autoMoveInterval = setInterval(function() {
-		console.log("move");
 		Drawer.moveWindow(x, y);
+		Drawer.drawFilteredPixel(x, y);
 		if(y >= Drawer.windowPixelH*s - s && x >= Drawer.windowPixelW*s - s) {
 			clearInterval(Drawer.autoMoveInterval);
 		}
@@ -385,6 +448,19 @@ Drawer.autoMove = function(time) {
 			x += s;
 		}
 	}, time);
+}
+
+Drawer.drawFilteredPixel = function(x, y) {
+	let offsetX = x/Drawer.PIXEL_SIZE;
+	let offsetY = y/Drawer.PIXEL_SIZE;
+	let realX = offsetX + Drawer.selectedRegionX*Drawer.REGION_PIXEL_NUMBER;
+	let realY = offsetY + Drawer.selectedRegionY*Drawer.REGION_PIXEL_NUMBER;
+	let pixelData = Drawer.filteredImageCtx.getImageData(realX, realY, 1, 1).data;
+	let val = (pixelData[0] + pixelData[1] + pixelData[2] ) / 3;
+	this.filteredRegionWindowCtx.beginPath();
+	this.filteredRegionCtx.fillStyle = 'rgb(' + [val, val, val] + ')'
+	this.filteredRegionCtx.fillRect(x, y, Drawer.PIXEL_SIZE, Drawer.PIXEL_SIZE);
+	this.filteredRegionWindowCtx.closePath();
 }
 
 function loadImg(input) {
