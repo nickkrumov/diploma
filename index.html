@@ -62,8 +62,6 @@
 			<option value="topsobel">top sobel</option>
 			<option value="custom">custom</option>
 		  </select>
-		  <input id="custom_filter_input" type="text" name="custom_filter" style="visibility: hidden;"/>
-		  <button type="button" id="custom_filter_button" style="visibility: hidden;" onClick="applyCustomFilter()">apply</button>
 		</form>
 	</span>
 </div>
@@ -119,6 +117,25 @@
 		<span id="equals">=</span>
 		<span id="result_cell"></span>
 	</div>
+</div>
+
+<div id="kernel">
+	<div>
+		<input type="number" min="-10" max="10" step="0.1" class="num" disabled>
+		<input type="number" min="-10" max="10" step="0.1" class="num" disabled>
+		<input type="number" min="-10" max="10" step="0.1" class="num" disabled>
+	</div>
+	<div>
+		<input type="number" min="-10" max="10" step="0.1" class="num" disabled>
+		<input type="number" min="-10" max="10" step="0.1" class="num" disabled>
+		<input type="number" min="-10" max="10" step="0.1" class="num" disabled>
+	</div>
+	<div>
+		<input type="number" min="-10" max="10" step="0.1" class="num" disabled>
+		<input type="number" min="-10" max="10" step="0.1" class="num" disabled>
+		<input type="number" min="-10" max="10" step="0.1" class="num" disabled>
+	</div>
+	<button type="button" id="custom_filter_button" style="visibility: hidden;" onClick="applyCustomFilter()">apply</button>
 </div>
 
 </body>

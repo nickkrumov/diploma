@@ -103,6 +103,11 @@ Drawer.init = function() {
 		let matrix = document.getElementById("matrix");
 		matrix.style.top = (regionSize + h + margin + 40) + "px";
 		matrix.style.visibility = "visible";
+
+		let kernel = document.getElementById("kernel");
+		kernel.style.top = (regionSize + h + margin + 40) + "px";
+		kernel.style.left = w + 40 + "px";
+		kernel.style.visibility = "visible";
 		
 		Drawer.originalImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);  
 		obtainPixelData();
@@ -118,15 +123,19 @@ Drawer.init = function() {
 }
 
 function showCustomFilterInput() {
-	let input = document.getElementById("custom_filter_input");
-	input.style.visibility = "visible";
+	let inputs = $(".num");
+	for (var i = 0; i < inputs.length; i++) {
+		inputs.get(i).disabled = false;
+	}
 	
 	let button = document.getElementById("custom_filter_button");
 	button.style.visibility = "visible";
 }
 function hideCustomFilterInput() {
-	let input = document.getElementById("custom_filter_input");
-	input.style.visibility = "hidden";
+	let inputs = $(".num");
+	for (var i = 0; i < inputs.length; i++) {
+		inputs.get(i).disabled = true;
+	}
 
 	let button = document.getElementById("custom_filter_button");
 	button.style.visibility = "hidden";
@@ -139,8 +148,11 @@ Drawer.drawFilteredImage = function() {
 	let selectedFilterOption = document.getElementsByName("filters")[0].value;
 	let mask = [];
 	if(selectedFilterOption == "custom") {
-		let input = document.getElementById("custom_filter_input");
-		mask = JSON.parse(input.value);
+		let inputs = $(".num");
+		
+		for (var i = 0; i < inputs.length; i++) {
+			mask.push(parseInt(inputs.get(i).value));
+		} 
 	}
 	else {
 		mask = filters.mask[selectedFilterOption];
@@ -437,6 +449,7 @@ Drawer.extractMatrix = function(x, y) {
 		}
 	}
 	Drawer.updateMatrix(currentPixels, Drawer.selectedMask);
+	Drawer.updateKernel(Drawer.selectedMask);
 }
 
 Drawer.moveWindow = function(x, y) {
@@ -605,4 +618,10 @@ Drawer.updateMatrix = function(a, f) {
 	res.style.color = txt;
 }
 
-// Drawer.updateMatrix([10,10,10,80,160,2,4,4,45],[1,1,1,2,2,2,-3,3,-6]);
+Drawer.updateKernel = function(arr) {
+	let inputs = $(".num");
+
+	for (var i = 0; i < inputs.length; i++) {
+		inputs.get(i).value = arr[i];
+	}
+}
