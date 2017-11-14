@@ -142,6 +142,11 @@ function hideCustomFilterInput() {
 }
 function applyCustomFilter() {
 	Drawer.drawFilteredImage();
+	if (!Drawer.enabledAutoMove) {
+		Drawer.drawRegion(Drawer.selectedRegionX * Drawer.REGION_PIXEL_NUMBER, Drawer.selectedRegionY * Drawer.REGION_PIXEL_NUMBER);
+		Drawer.drawFilteredRegion(Drawer.selectedRegionX * Drawer.REGION_PIXEL_NUMBER, Drawer.selectedRegionY * Drawer.REGION_PIXEL_NUMBER);
+		Drawer.moveWindow(0, 0);
+	}
 }
 
 Drawer.drawFilteredImage = function() {
@@ -559,6 +564,11 @@ document.getElementsByName("filters")[0].onchange = function() {
 	else {
 		hideCustomFilterInput();
 		Drawer.drawFilteredImage();
+		if (!Drawer.enabledAutoMove) {
+			Drawer.drawRegion(Drawer.selectedRegionX * Drawer.REGION_PIXEL_NUMBER, Drawer.selectedRegionY * Drawer.REGION_PIXEL_NUMBER);
+			Drawer.drawFilteredRegion(Drawer.selectedRegionX * Drawer.REGION_PIXEL_NUMBER, Drawer.selectedRegionY * Drawer.REGION_PIXEL_NUMBER);
+			Drawer.moveWindow(0, 0);
+		}
 	}
 }
 document.getElementsByName("speed")[0].onchange = function() {
