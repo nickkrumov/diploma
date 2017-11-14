@@ -151,7 +151,7 @@ Drawer.drawFilteredImage = function() {
 		let inputs = $(".num");
 		
 		for (var i = 0; i < inputs.length; i++) {
-			mask.push(parseInt(inputs.get(i).value));
+			mask.push(inputs.get(i).value);
 		} 
 	}
 	else {
