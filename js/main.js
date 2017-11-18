@@ -1,5 +1,7 @@
 var Drawer = {};
 /* Canvas initialization */
+Drawer.uploadedImageCanvas = document.getElementById("uploaded-image-canvas");
+
 Drawer.originalImageCanvas = document.getElementById("original-image-canvas");
 Drawer.originalImageOverlayCanvas = document.getElementById("original-image-overlay-canvas");
 
@@ -10,6 +12,8 @@ Drawer.originalRegionWindowCanvas = document.getElementById("original-region-win
 
 Drawer.filteredRegionCanvas = document.getElementById("filtered-region-canvas");
 Drawer.filteredRegionWindowCanvas = document.getElementById("filtered-region-window-canvas");
+
+Drawer.uploadedImageCtx = Drawer.uploadedImageCanvas.getContext("2d");
 
 Drawer.originalImageCtx = Drawer.originalImageCanvas.getContext("2d");
 Drawer.originalImageOverlayCtx = Drawer.originalImageOverlayCanvas.getContext("2d");
@@ -26,7 +30,7 @@ Drawer.filteredRegionWindowCtx = Drawer.filteredRegionWindowCanvas.getContext("2
 Drawer.PIXEL_SIZE = 10;
 Drawer.MAX_IMAGE_WIDTH = 400;
 Drawer.REGION_PIXEL_NUMBER = 40;
-Drawer.AUTO_MOVE_INTERVAL_TIME = 10;
+Drawer.AUTO_MOVE_INTERVAL_TIME = 100;
 
 /* Global state */
 Drawer.pixelData = [];
@@ -53,6 +57,9 @@ Drawer.init = function() {
 		let w = img.width*scale;
 		let h = img.height*scale;
 		h = h - h % Drawer.PIXEL_SIZE;
+
+		Drawer.uploadedImageCanvas.width = w;
+		Drawer.uploadedImageCanvas.height = h;
 		
 		Drawer.originalImageCanvas.width = w;
 		Drawer.originalImageCanvas.height = h;
@@ -77,39 +84,44 @@ Drawer.init = function() {
 		Drawer.filteredRegionWindowCanvas.height = regionSize;
 		Drawer.filteredRegionWindowCanvas.width = regionSize;
 		
-		let margin = 100;
+		let marginTop = 100;
+		let marginLeft = 50;
 		
-		Drawer.originalImageCanvas.style.top = margin + "px";
+		Drawer.originalImageCanvas.style.top = marginTop + "px";
 		//Drawer.originalImageCanvas.style.left = margin + "px";
 		
-		Drawer.originalImageOverlayCanvas.style.top = margin + "px";
+		Drawer.originalImageOverlayCanvas.style.top = marginTop + "px";
 		//Drawer.originalImageOverlayCanvas.style.left = margin + "px";
 		
-		Drawer.filteredImageCanvas.style.top = margin + "px";
-		Drawer.filteredImageCanvas.style.left = (w + /*margin*/ + 50) + "px";
+		Drawer.filteredImageCanvas.style.top = marginTop + "px";
+		Drawer.filteredImageCanvas.style.left = (w + marginLeft) + "px";
+
+		Drawer.uploadedImageCanvas.style.top = marginTop + "px";
+		Drawer.uploadedImageCanvas.style.left = (w + w + marginLeft + marginLeft) + "px";
 		
-		Drawer.originalRegionCanvas.style.top = (h + margin + 20) + "px";
+		Drawer.originalRegionCanvas.style.top = (h + marginTop + 20) + "px";
 		//Drawer.originalRegionCanvas.style.left = margin + "px";
 		
-		Drawer.originalRegionWindowCanvas.style.top = (h + margin + 20) + "px";
+		Drawer.originalRegionWindowCanvas.style.top = (h + marginTop + 20) + "px";
 		//Drawer.originalRegionWindowCanvas.style.left = margin + "px";
 		
-		Drawer.filteredRegionCanvas.style.top = (h + margin + 20) + "px";
-		Drawer.filteredRegionCanvas.style.left = (regionSize + /*margin*/ + 50) + "px";
+		Drawer.filteredRegionCanvas.style.top = (h + marginTop + 20) + "px";
+		Drawer.filteredRegionCanvas.style.left = (regionSize + marginLeft) + "px";
 		
-		Drawer.filteredRegionWindowCanvas.style.top = (h + margin + 20) + "px";
-		Drawer.filteredRegionWindowCanvas.style.left = (regionSize + /*margin*/ + 50) + "px";
+		Drawer.filteredRegionWindowCanvas.style.top = (h + marginTop + 20) + "px";
+		Drawer.filteredRegionWindowCanvas.style.left = (regionSize + marginLeft) + "px";
 		
 		let matrix = document.getElementById("matrix");
-		matrix.style.top = (regionSize + h + margin + 40) + "px";
+		matrix.style.top = (regionSize + h + marginTop + 40) + "px";
 		matrix.style.visibility = "visible";
 
 		let kernel = document.getElementById("kernel");
-		kernel.style.top = (regionSize + h + margin + 40) + "px";
+		kernel.style.top = (regionSize + h + marginTop + 40) + "px";
 		kernel.style.left = w + 40 + "px";
 		kernel.style.visibility = "visible";
 		
-		Drawer.originalImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);  
+		Drawer.uploadedImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);
+		Drawer.originalImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);
 		obtainPixelData();
 		Drawer.selectedRegionX = 0;
 		Drawer.selectedRegionY = 0;
