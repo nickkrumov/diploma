@@ -13,6 +13,9 @@ Drawer.originalRegionWindowCanvas = document.getElementById("original-region-win
 Drawer.filteredRegionCanvas = document.getElementById("filtered-region-canvas");
 Drawer.filteredRegionWindowCanvas = document.getElementById("filtered-region-window-canvas");
 
+Drawer.matrix = document.getElementById("matrix");
+Drawer.kernel = document.getElementById("kernel");
+
 Drawer.uploadedImageCtx = Drawer.uploadedImageCanvas.getContext("2d");
 
 Drawer.originalImageCtx = Drawer.originalImageCanvas.getContext("2d");
@@ -85,7 +88,7 @@ Drawer.init = function() {
 		Drawer.filteredRegionWindowCanvas.width = regionSize;
 		
 		let marginTop = 100;
-		let marginLeft = 50;
+		let marginLeft = 195;
 		
 		Drawer.originalImageCanvas.style.top = marginTop + "px";
 		//Drawer.originalImageCanvas.style.left = margin + "px";
@@ -97,28 +100,27 @@ Drawer.init = function() {
 		Drawer.filteredImageCanvas.style.left = (w + marginLeft) + "px";
 
 		Drawer.uploadedImageCanvas.style.top = marginTop + "px";
-		Drawer.uploadedImageCanvas.style.left = (w + w + marginLeft + marginLeft) + "px";
+		Drawer.uploadedImageCanvas.style.left = (w + w + marginLeft + 20) + "px";
 		
-		Drawer.originalRegionCanvas.style.top = (h + marginTop + 20) + "px";
+		Drawer.originalRegionCanvas.style.top = (h + marginTop + 30) + "px";
 		//Drawer.originalRegionCanvas.style.left = margin + "px";
 		
-		Drawer.originalRegionWindowCanvas.style.top = (h + marginTop + 20) + "px";
+		Drawer.originalRegionWindowCanvas.style.top = (h + marginTop + 30) + "px";
 		//Drawer.originalRegionWindowCanvas.style.left = margin + "px";
 		
-		Drawer.filteredRegionCanvas.style.top = (h + marginTop + 20) + "px";
+		Drawer.filteredRegionCanvas.style.top = (h + marginTop + 30) + "px";
 		Drawer.filteredRegionCanvas.style.left = (regionSize + marginLeft) + "px";
 		
-		Drawer.filteredRegionWindowCanvas.style.top = (h + marginTop + 20) + "px";
+		Drawer.filteredRegionWindowCanvas.style.top = (h + marginTop + 30) + "px";
 		Drawer.filteredRegionWindowCanvas.style.left = (regionSize + marginLeft) + "px";
 		
-		let matrix = document.getElementById("matrix");
-		matrix.style.top = (regionSize + h + marginTop + 40) + "px";
-		matrix.style.visibility = "visible";
+		Drawer.matrix.style.top = (h + marginTop + regionSize/3) + "px";
+		Drawer.matrix.style.left = (regionSize + 15) + "px";
+		Drawer.matrix.style.visibility = "visible";
 
-		let kernel = document.getElementById("kernel");
-		kernel.style.top = (regionSize + h + marginTop + 40) + "px";
-		kernel.style.left = w + 40 + "px";
-		kernel.style.visibility = "visible";
+		Drawer.kernel.style.top = (/*regionSize + h +*/ marginTop) + "px";
+		Drawer.kernel.style.left = (w + 30) + "px";
+		Drawer.kernel.style.visibility = "visible";
 		
 		Drawer.uploadedImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);
 		Drawer.originalImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);
