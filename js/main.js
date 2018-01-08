@@ -29,6 +29,14 @@ Drawer.originalRegionWindowCtx = Drawer.originalRegionWindowCanvas.getContext("2
 Drawer.filteredRegionCtx = Drawer.filteredRegionCanvas.getContext("2d");
 Drawer.filteredRegionWindowCtx = Drawer.filteredRegionWindowCanvas.getContext("2d");
 
+Drawer.text1 = document.getElementById("text1");
+Drawer.text2 = document.getElementById("text2");
+Drawer.text3 = document.getElementById("text3");
+Drawer.text4 = document.getElementById("text4");
+Drawer.text5 = document.getElementById("text5");
+Drawer.text6 = document.getElementById("text6");
+Drawer.text7 = document.getElementById("text7");
+
 /* Constants */
 Drawer.PIXEL_SIZE = 10;
 Drawer.MAX_IMAGE_WIDTH = 400;
@@ -91,6 +99,8 @@ Drawer.init = function() {
 		let marginLeft = 195;
 		
 		Drawer.originalImageCanvas.style.top = marginTop + "px";
+		Drawer.text1.style.top = marginTop + Drawer.originalImageCanvas.height + 5 +"px";
+		if (Drawer.originalImageCanvas.width < 150) { Drawer.text1.style.width = "100px"; } else { Drawer.text1.style.width = ""; }
 		//Drawer.originalImageCanvas.style.left = margin + "px";
 		
 		Drawer.originalImageOverlayCanvas.style.top = marginTop + "px";
@@ -98,29 +108,41 @@ Drawer.init = function() {
 		
 		Drawer.filteredImageCanvas.style.top = marginTop + "px";
 		Drawer.filteredImageCanvas.style.left = (w + marginLeft) + "px";
+		Drawer.text2.style.top = marginTop + Drawer.filteredImageCanvas.height + 5 + "px";
+		Drawer.text2.style.left = (w + marginLeft) + "px";
+		if (Drawer.filteredImageCanvas.width < 150) { Drawer.text2.style.width = "100px"; } else { Drawer.text2.style.width = ""; }
 
 		Drawer.uploadedImageCanvas.style.top = marginTop + "px";
 		Drawer.uploadedImageCanvas.style.left = (w + w + marginLeft + 20) + "px";
+		Drawer.text5.style.top = marginTop + Drawer.uploadedImageCanvas.height + 5 + "px";
+		Drawer.text5.style.left = (w + w + marginLeft + 20) + "px";
 		
-		Drawer.originalRegionCanvas.style.top = (h + marginTop + 30) + "px";
+		Drawer.originalRegionCanvas.style.top = (h + marginTop + 55) + "px";
+		Drawer.text3.style.top = (h + marginTop + 55) + Drawer.originalRegionCanvas.height + 5 + "px";
 		//Drawer.originalRegionCanvas.style.left = margin + "px";
 		
-		Drawer.originalRegionWindowCanvas.style.top = (h + marginTop + 30) + "px";
+		Drawer.originalRegionWindowCanvas.style.top = (h + marginTop + 55) + "px";
 		//Drawer.originalRegionWindowCanvas.style.left = margin + "px";
 		
-		Drawer.filteredRegionCanvas.style.top = (h + marginTop + 30) + "px";
+		Drawer.filteredRegionCanvas.style.top = (h + marginTop + 55) + "px";
 		Drawer.filteredRegionCanvas.style.left = (regionSize + marginLeft) + "px";
+		Drawer.text4.style.top = (h + marginTop + 55) + Drawer.filteredRegionCanvas.height + 5 + "px";
+		Drawer.text4.style.left = (regionSize + marginLeft) + "px";
 		
-		Drawer.filteredRegionWindowCanvas.style.top = (h + marginTop + 30) + "px";
+		Drawer.filteredRegionWindowCanvas.style.top = (h + marginTop + 55) + "px";
 		Drawer.filteredRegionWindowCanvas.style.left = (regionSize + marginLeft) + "px";
 		
 		Drawer.matrix.style.top = (h + marginTop + regionSize/3) + "px";
 		Drawer.matrix.style.left = (regionSize + 15) + "px";
 		Drawer.matrix.style.visibility = "visible";
+		Drawer.text7.style.top = (h + marginTop + regionSize/3) - 45 + "px";
+		Drawer.text7.style.left = (regionSize + 15 + 15) + "px";
 
 		Drawer.kernel.style.top = (/*regionSize + h +*/ marginTop) + "px";
-		Drawer.kernel.style.left = (w + 30) + "px";
+		Drawer.kernel.style.left = (w + 20) + "px";
 		Drawer.kernel.style.visibility = "visible";
+		Drawer.text6.style.top = marginTop + Drawer.kernel.offsetHeight - 25 + "px";
+		Drawer.text6.style.left = w + 20 + 60 + "px";
 		
 		Drawer.uploadedImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);
 		Drawer.originalImageCtx.drawImage(img,0,0, img.width, img.height, 0, 0, w, h);
