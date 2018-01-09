@@ -1,0 +1,30 @@
+/*
+Wm=-pi:.1:pi;
+
+Wn=Wm';
+
+X=ones(size(Wn))*Wm;
+
+Y=Wn*ones(size(Wm));
+
+a=1;b=-2;c=1; d=-2;e=5;f=-2; g=1;h=-2;k=1; %purvo
+%a=1;b=-2;c=1; d=-2;e=4;f=-2; g=1;h=-2;k=1; %vtoro
+%a=0;b=1;c=2; d=-1;e=0;f=1; g=-2;h=-1;k=0; %treto
+%a=1/16;b=2/16;c=1/16; d=2/16;e=4/16;f=2/16; g=1/16;h=2/16;k=1/16; %chetri
+
+R=a*cos(X+Y)+b*cos(Y)+c*cos(X-Y)+d*cos(X)+e+f*cos(X)+g*cos(X-Y)+h*cos(Y)+k*cos(X+Y);
+
+I=-a*sin(X+Y)-b*sin(Y)+c*sin(X-Y)-d*sin(X)+f*sin(X)-g*sin(X-Y)+h*sin(Y)+k*sin(X+Y);
+
+M=sqrt(R.*R+I.*I);
+
+F=atan(I./R);
+
+mesh(Wm,Wn, M)
+
+xlabel(' Wm ');
+
+ylabel(' Wn ');
+
+zlabel('Amplitude M');
+*/
