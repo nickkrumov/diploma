@@ -198,8 +198,9 @@ Drawer.drawFilteredImage = function() {
 	else {
 		mask = filters.mask[selectedFilterOption];
 	}
-	console.log(mask);
 	Drawer.selectedMask = mask;
+	console.log(mask);
+	console.log(Drawer.selectedMask);
 	let data = filters.applyFilter(mask);
 	let newData = [];
 	for(let i = 0; i < data.length; i++) {
@@ -670,4 +671,15 @@ Drawer.updateKernel = function(arr) {
 	for (var i = 0; i < inputs.length; i++) {
 		inputs.get(i).value = arr[i];
 	}
+}
+
+function openACH() {
+	console.log("window opened");
+	var popup = window.open("ach.html", "_blank", "toolbar=no, top=200, left=200, width=510, height=570");
+	popup.focus();
+
+	//a.addEventListener('load', function() {
+		//popup.generateACH([-1, -1, -1, -1, 8, -1, -1, -1, -1]);
+		//window.setTimeout(callChildWindowFunction(), 1000);
+	//}, true);
 }
