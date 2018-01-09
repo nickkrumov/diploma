@@ -518,26 +518,26 @@ Drawer.arrowMove = function(e) {
 	let x = Drawer.window.x;
 	let y = Drawer.window.y;
 	// A
-	if(e.keyCode == 65) {	
+	if(e.keyCode == 37) {	
 		if(x > 0) {
 			Drawer.moveWindow(x-s, y);
 		}
 	}
 	// D
-	if(e.keyCode == 68) {	
+	if(e.keyCode == 39) {	
 		if(x < Drawer.windowPixelW*s-s) {
 			Drawer.moveWindow(x+s, y);
 		}
 	}
 	
 	// W
-	if(e.keyCode == 87) {	
+	if(e.keyCode == 38) {	
 		if(y > 0) {
 			Drawer.moveWindow(x, y-s);
 		}
 	}
 	// S
-	if(e.keyCode == 83) {	
+	if(e.keyCode == 40) {	
 		if(y < Drawer.windowPixelH*s-s) {
 			Drawer.moveWindow(x, y+s);
 		}
@@ -621,10 +621,12 @@ $('input[type=radio][name=mode]').change(function() {
 	checkMode();
 });
 
-// add or remove this listener depending on enabledAutoMove
-//document.addEventListener( "keydown", Drawer.arrowMove, true);
-//Drawer.autoMove(500);
-//Drawer.init();
+//prevent page from scrolling with arrow the keys
+window.addEventListener("keydown", function(e) {
+    if([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+    }
+}, false);
 
 function checkMode() {
 	if(Drawer.enabledAutoMove) {
