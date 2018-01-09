@@ -37,6 +37,7 @@
 
 #text1, #text2, #text3, #text4, #text5, #text6, #text7 {
 	position: absolute;
+	visibility: hidden;
 }
 
 #text7 { width: 150px; text-align: center; }
