@@ -628,7 +628,7 @@ $('input[type=radio][name=mode]').change(function() {
 	checkMode();
 });
 
-//prevent page from scrolling with arrow the keys
+//prevent page from scrolling with the arrow keys
 window.addEventListener("keydown", function(e) {
     if([37, 38, 39, 40].indexOf(e.keyCode) > -1) {
         e.preventDefault();
