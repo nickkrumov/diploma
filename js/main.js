@@ -277,7 +277,7 @@ function selectRegion(e) {
 
     var rect = Drawer.originalImageOverlayCanvas.getBoundingClientRect(),
         mx = e.clientX - rect.left,
-        my = e.clientY - rect.top,
+		my = e.clientY - rect.top,
         
 	/// get index from mouse position
 	xIndex = Math.round((mx - Drawer.REGION_PIXEL_NUMBER * 0.5) / Drawer.REGION_PIXEL_NUMBER),
@@ -290,6 +290,8 @@ function selectRegion(e) {
 		Drawer.drawFilteredRegion(xIndex*Drawer.REGION_PIXEL_NUMBER, yIndex*Drawer.REGION_PIXEL_NUMBER);
 	}
 	
+	console.log(xIndex, yIndex);
+
 	Drawer.selectedRegionX = xIndex;
 	Drawer.selectedRegionY = yIndex;
 	Drawer.moveWindow(0, 0);
