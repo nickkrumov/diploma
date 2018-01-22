@@ -10,15 +10,15 @@ filters.applyFilter = function(mask) {
 		let currentPixels = [];
 		for(let row = -offset; row <= offset; row++) {
 			for(let col = -offset; col <= offset; col++) {
-				let index = i + w*row + col;
+				let index = i + w*row + col; // 
 				let p = Drawer.pixelData[index] || 0;
-				if(i % w == 0 && col < 0) {
+				if(i % w == 0 && col < 0) { // първия пиксел от реда (400) - леви лимити.
 					p = 0;
 				}
-				if((i % w == (w-1)) && col > 0) {
+				if((i % w == (w-1)) && col > 0) { // последния пиксел от реда (399) - десни лимити.
 					p = 0;
 				}
-				currentPixels.push(Math.round(p));
+				currentPixels.push(Math.round(p)); // самия прозорец от 9 стойности.
 			}
 		}
 		let res = 0;

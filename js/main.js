@@ -269,6 +269,7 @@ function render() {
 				 
 		Drawer.originalImageOverlayCtx.strokeStyle="#FFF";
 		Drawer.originalImageOverlayCtx.stroke();
+		
 }
 
 function selectRegion(e) {
